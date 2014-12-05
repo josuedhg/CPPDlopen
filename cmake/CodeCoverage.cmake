@@ -2,7 +2,7 @@ find_program(gcov gcov REQUIRED)
 find_program(lcov lcov REQUIRED)
 find_program(genhtml genhtml REQUIRED)
 
-SET(CMAKE_C_FLAGS "--coverage")
+SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "--coverage")
 
 function(coverage_target build_dir extract_pattern target_dependency)
 	add_custom_target(coverage

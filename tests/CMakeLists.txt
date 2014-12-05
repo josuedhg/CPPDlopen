@@ -1,22 +1,22 @@
-find_package(cmocka)
+find_package(GTest REQUIRED)
 
 enable_testing()
 
-include_directories(${CMAKE_SOURCE_DIR}/src)
+include_directories(${CMAKE_SOURCE_DIR}/lib)
 
 add_definitions(-DUNIT_TESTING=ON)
 
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure)
 
-file(GLOB c_sources ${CMAKE_SOURCE_DIR}/src/*.c)
+file(GLOB cpp_sources ${CMAKE_SOURCE_DIR}/lib/*.cc)
 
-file(GLOB c_tests test_*.c)
+file(GLOB cpp_tests test_*.cc)
 
-foreach(file ${c_tests})
+foreach(file ${cpp_tests})
 	get_filename_component(test_name ${file} NAME_WE)
-	add_executable(${test_name} ${file} ${c_sources})
+	add_executable(${test_name} ${file} ${cpp_sources})
 
-	target_link_libraries(${test_name} cmocka)
+	target_link_libraries(${test_name} GTest::GTest)
 
 	add_test(NAME ${test_name}
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
