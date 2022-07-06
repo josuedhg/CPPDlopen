@@ -1,9 +1,16 @@
+#include <memory>
 #include <stdio.h>
 
-#include "hello.h"
+#include "polygon.h"
+#include "dlopen.h"
 
 int main(void)
 {
-	puts(hello());
+	DLOpen dlopen("./triangle.so");
+	create_t *create = (create_t *)dlopen.getSymbol("create");
+
+	std::unique_ptr<Polygon> p(create(3.0));
+	printf("%f\n", p->area());
+
 	return 0;
 }
