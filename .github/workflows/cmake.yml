@@ -21,7 +21,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install Dependencies
+    - name: Install GTest
+      run: sudo apt-get install libgtest-dev && cd /usr/src/gtest && sudo cmake -DBUILD_SHARED_LIBS=ON CMakeLists.txt && sudo make && sudo cp -a lib/libgtest_main.so lib/libgtest.so /usr/lib/
+    - name: Install LCov
       run: sudo apt-get install libcmocka-dev gcovr lcov
     - name: Install gh-pages
       run: sudo npm install -g gh-pages@3.0.0 --save-devi --prefix /usr/

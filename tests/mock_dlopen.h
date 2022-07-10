@@ -1,7 +1,6 @@
 #ifndef __MOCK_DLOPEN_H__
 #define __MOCK_DLOPEN_H__
 
-#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 namespace testing_c {
