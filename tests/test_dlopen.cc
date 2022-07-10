@@ -1,3 +1,4 @@
+#include <dlfcn.h>
 #include <gtest/gtest.h>
 
 
@@ -91,6 +92,58 @@ TEST(DLOpenTest, GetSymbol) {
 
 	DLOpen dlopen("/path/to/lib");
 	void *symbol = dlopen.getSymbol("symbol");
+	ASSERT_EQ(symbol, fake_symbol);
+}
+
+TEST(DLOpenTest, ThrowExceptionOnSymbolNextNotFound) {
+	std::string error_message = "dlsym error";
+	std::unique_ptr<testing_c::Mock_dlerror> mock_dlerr(mock_dlerror = new testing_c::Mock_dlerror(const_cast<char *>(strdup(error_message.c_str()))));
+	std::unique_ptr<testing_c::Mock_dlsym> mock_sym(mock_dlsym = new testing_c::Mock_dlsym(NULL));
+
+	mock_sym->expect_handle(RTLD_NEXT);
+	mock_sym->expect_symbol("symbol");
+	void *symbol = NULL;
+	try {
+		symbol = DLOpen::getSymbolNext("symbol");
+	} catch (std::runtime_error &e) {
+		ASSERT_STREQ(e.what(), "dlsym error");
+	}
+	ASSERT_EQ(symbol, (void *)NULL);
+}
+
+TEST(DLOpenTest, GetSymbolNext) {
+	void *fake_symbol = reinterpret_cast<void *>(1);
+	std::unique_ptr<testing_c::Mock_dlsym> mock_sym(mock_dlsym = new testing_c::Mock_dlsym(fake_symbol));
+
+	mock_sym->expect_handle(RTLD_NEXT);
+	mock_sym->expect_symbol("symbol");
+	void *symbol = DLOpen::getSymbolNext("symbol");
+	ASSERT_EQ(symbol, fake_symbol);
+}
+
+TEST(DLOpenTest, ThrowExceptionOnSymbolDefaultNotFound) {
+	std::string error_message = "dlsym error";
+	std::unique_ptr<testing_c::Mock_dlerror> mock_dlerr(mock_dlerror = new testing_c::Mock_dlerror(const_cast<char *>(strdup(error_message.c_str()))));
+	std::unique_ptr<testing_c::Mock_dlsym> mock_sym(mock_dlsym = new testing_c::Mock_dlsym(NULL));
+
+	mock_sym->expect_handle(RTLD_DEFAULT);
+	mock_sym->expect_symbol("symbol");
+	void *symbol = NULL;
+	try {
+		symbol = DLOpen::getSymbolDefault("symbol");
+	} catch (std::runtime_error &e) {
+		ASSERT_STREQ(e.what(), "dlsym error");
+	}
+	ASSERT_EQ(symbol, (void *)NULL);
+}
+
+TEST(DLOpenTest, GetSymbolDefault) {
+	void *fake_symbol = reinterpret_cast<void *>(1);
+	std::unique_ptr<testing_c::Mock_dlsym> mock_sym(mock_dlsym = new testing_c::Mock_dlsym(fake_symbol));
+
+	mock_sym->expect_handle(RTLD_DEFAULT);
+	mock_sym->expect_symbol("symbol");
+	void *symbol = DLOpen::getSymbolDefault("symbol");
 	ASSERT_EQ(symbol, fake_symbol);
 }
 

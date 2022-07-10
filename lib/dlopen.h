@@ -10,6 +10,8 @@ public:
 	DLOpen(std::string path, int flag = RTLD_LAZY);
 	~DLOpen();
 	void *getSymbol(std::string name);
+	static void *getSymbolNext(std::string name);
+	static void *getSymbolDefault(std::string name);
 };
 
 #endif /* end of include guard: __DLOPEN_H__ */
